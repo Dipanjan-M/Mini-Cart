@@ -23,6 +23,7 @@ public class OrderLineItem {
 	private long id;
 	private String itemName;
 	private int itemQuantity;
+	private double unitPrice;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
@@ -55,6 +56,14 @@ public class OrderLineItem {
 
 	public void setItemQuantity(int itemQuantity) {
 		this.itemQuantity = itemQuantity;
+	}
+
+	public double getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(double unitPrice) {
+		this.unitPrice = unitPrice;
 	}
 
 	public SalesOrder getSalesOrder() {

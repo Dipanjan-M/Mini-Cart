@@ -24,6 +24,7 @@ import com.miniCart.salesorder.models.ItemDto;
 import com.miniCart.salesorder.models.OrderDto;
 import com.miniCart.salesorder.models.OrderResponseDto;
 import com.miniCart.salesorder.models.Properties;
+import com.miniCart.salesorder.models.StatusResponse;
 import com.miniCart.salesorder.services.SalesOrderService;
 
 import feign.FeignException;
@@ -105,6 +106,13 @@ public class SalesOrderServiceController {
 	public ResponseEntity<?> getAllProducts() {
 		List<ItemDto> allItemsFromProxy = this.service.getAllItemsFromProxy();
 		return ResponseEntity.ok(allItemsFromProxy);
+	}
+
+	@GetMapping("/item/status")
+	@CircuitBreaker(name = "itemServiceProxyCB", fallbackMethod = "itemServiceOutage")
+	public ResponseEntity<?> getItemServiceStatus() {
+		StatusResponse status = this.service.fetchItemServiceStatus();
+		return ResponseEntity.ok(status);
 	}
 
 	@SuppressWarnings("unused")

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.miniCart.item.configs.ItemServiceConfig;
 import com.miniCart.item.entities.Item;
 import com.miniCart.item.models.CustomValidationError;
+import com.miniCart.item.models.HelloResponse;
 import com.miniCart.item.models.Properties;
 import com.miniCart.item.repos.ItemRepository;
 
@@ -30,6 +32,9 @@ public class ItemController {
 
 	@Autowired
 	private ItemRepository itemRepo;
+
+	@Autowired
+	private Environment env;
 
 	@GetMapping("/items")
 	public ResponseEntity<?> getItems() {
@@ -75,6 +80,14 @@ public class ItemController {
 		Properties properties = new Properties(this.serviceConfig.getMsg(), this.serviceConfig.getBuildVersion(),
 				this.serviceConfig.getMailDetails(), this.serviceConfig.getActiveDBs());
 		return ResponseEntity.ok(properties);
+	}
+
+	@GetMapping("/status")
+	public ResponseEntity<?> sayHello() {
+		HelloResponse hello = new HelloResponse();
+		hello.setMessage("Hello from Item service !!! Status is UP");
+		hello.setEnvironment(this.env.getProperty("local.server.port"));
+		return ResponseEntity.ok(hello);
 	}
 
 }

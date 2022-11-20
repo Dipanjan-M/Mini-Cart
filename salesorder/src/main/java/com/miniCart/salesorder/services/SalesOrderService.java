@@ -16,6 +16,7 @@ import com.miniCart.salesorder.entities.SalesOrder;
 import com.miniCart.salesorder.models.ItemDto;
 import com.miniCart.salesorder.models.LookupResponseDto;
 import com.miniCart.salesorder.models.OrderResponseDto;
+import com.miniCart.salesorder.models.StatusResponse;
 import com.miniCart.salesorder.proxies.ItemServiceProxy;
 import com.miniCart.salesorder.repos.CustomerSoSRepository;
 import com.miniCart.salesorder.repos.SalesOrderRepository;
@@ -56,6 +57,7 @@ public class SalesOrderService {
 			OrderLineItem oli = new OrderLineItem();
 			oli.setItemName(item.getName());
 			oli.setItemQuantity(Integer.valueOf(es.getValue()));
+			oli.setUnitPrice(item.getPrice());
 			Double totalPrice = Integer.valueOf(es.getValue()) * item.getPrice();
 			res.put(oli, totalPrice);
 		}
@@ -93,5 +95,10 @@ public class SalesOrderService {
 
 	public List<CustomerSoS> fetchAllCustomer() {
 		return this.custSosRepo.findAll();
+	}
+
+	public StatusResponse fetchItemServiceStatus() {
+		ResponseEntity<StatusResponse> status = this.itemServiceProxy.getStatusOfItemService();
+		return status.getBody();
 	}
 }
