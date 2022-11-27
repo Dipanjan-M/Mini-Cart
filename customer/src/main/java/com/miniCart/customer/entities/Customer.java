@@ -1,10 +1,13 @@
 package com.miniCart.customer.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -40,6 +43,10 @@ public class Customer {
 
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
+
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "role_id", referencedColumnName = "roleId")
+	private Role role;
 
 	public long getId() {
 		return id;
@@ -79,6 +86,14 @@ public class Customer {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 }

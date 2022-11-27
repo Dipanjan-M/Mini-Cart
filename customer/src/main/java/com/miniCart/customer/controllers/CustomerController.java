@@ -9,8 +9,11 @@ import javax.validation.Valid;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,16 +28,25 @@ import com.miniCart.customer.models.CustomValidationError;
 import com.miniCart.customer.models.CustomerCreationEventData;
 import com.miniCart.customer.models.Properties;
 import com.miniCart.customer.repos.CustomerRepository;
+import com.miniCart.customer.repos.RoleRepository;
 
 @RestController
-@RequestMapping("customer-service/api/v1")
+@RequestMapping("/customer-service/api/v1")
 public class CustomerController {
 
 	@Autowired
 	private CustomerRepository customerRepo;
 
 	@Autowired
+	private RoleRepository roleRepo;
+
+	@Autowired
 	private CustomerServiceConfig serviceConfig;
+
+	@Bean
+	public PasswordEncoder getPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
 	@Autowired
 	@Qualifier("myAmqpTemplateBean")
@@ -60,6 +72,8 @@ public class CustomerController {
 					.body("Customer with email << " + existingCustomer.get().getEmail() + " >>  already exists.");
 		}
 
+		customer.setPassword(getPasswordEncoder().encode(customer.getPassword()));
+		customer.setRole(this.roleRepo.findByRoleName("CUSTOMER"));
 		Customer savedCustomer = this.customerRepo.saveAndFlush(customer);
 		if (savedCustomer.getId() == 0) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database operation failed !!!");
