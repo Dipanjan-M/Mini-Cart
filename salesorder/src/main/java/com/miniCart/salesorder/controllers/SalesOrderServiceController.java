@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miniCart.salesorder.configs.SalesOrderServiceConfig;
+import com.miniCart.salesorder.constants.SecurityConstants;
 import com.miniCart.salesorder.entities.CustomerSoS;
 import com.miniCart.salesorder.entities.OrderLineItem;
 import com.miniCart.salesorder.entities.SalesOrder;
@@ -43,7 +45,8 @@ public class SalesOrderServiceController {
 
 	@PostMapping("/orders")
 	@CircuitBreaker(name = "itemServiceProxyCB", fallbackMethod = "itemServiceOutagePost")
-	public ResponseEntity<?> createOrder(@RequestBody OrderDto orderDto) {
+	public ResponseEntity<?> createOrder(@RequestHeader(SecurityConstants.JWT_HEADER) String jwt,
+			@RequestBody OrderDto orderDto) {
 		// Step 1: check if customer exists in localDB
 		CustomerSoS custSos = this.service.checkIfCustomerExistsInLocalDB(orderDto.getCustomerId());
 		if (custSos == null) {
@@ -52,7 +55,7 @@ public class SalesOrderServiceController {
 
 		// Step 2: Validate items by invoking items microservice
 		Map<OrderLineItem, Double> oliAndTp = null;
-		oliAndTp = this.service.buildOrderLineItemListFromItemNameList(orderDto.getItemNamesAndCount());
+		oliAndTp = this.service.buildOrderLineItemListFromItemNameList(jwt, orderDto.getItemNamesAndCount());
 
 		// Step 3: create order by inserting SalesOrder object
 		double totalPrice = 0;
@@ -103,8 +106,8 @@ public class SalesOrderServiceController {
 
 	@GetMapping("/items")
 	@CircuitBreaker(name = "itemServiceProxyCB", fallbackMethod = "itemServiceOutage")
-	public ResponseEntity<?> getAllProducts() {
-		List<ItemDto> allItemsFromProxy = this.service.getAllItemsFromProxy();
+	public ResponseEntity<?> getAllProducts(@RequestHeader(SecurityConstants.JWT_HEADER) String jwt) {
+		List<ItemDto> allItemsFromProxy = this.service.getAllItemsFromProxy(jwt);
 		return ResponseEntity.ok(allItemsFromProxy);
 	}
 

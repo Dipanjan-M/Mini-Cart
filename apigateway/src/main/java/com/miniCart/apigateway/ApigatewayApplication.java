@@ -17,18 +17,29 @@ public class ApigatewayApplication {
 
 	@Bean
 	public RouteLocator myRoutes(RouteLocatorBuilder builder) {
-		return builder.routes().route(p -> p.path("/mini-cart/customer/**")
-				.filters(
-						f -> f.rewritePath("/mini-cart/customer/(?<segment>.*)", "/customer-service/api/v1/${segment}"))
-				.uri("lb://CUSTOMER"))
-				.route(p -> p.path("/mini-cart/item/**")
-						.filters(
-								f -> f.rewritePath("/mini-cart/item/(?<segment>.*)", "/item-service/api/v1/${segment}"))
-						.uri("lb://ITEM"))
-				.route(p -> p.path("/mini-cart/sales-order/**").filters(f -> f
-						.rewritePath("/mini-cart/sales-order/(?<segment>.*)", "/sales-order-service/api/v1/${segment}"))
-						.uri("lb://SALESORDER"))
+		// @formatter:off
+		return builder
+				.routes()
+					.route(p -> p.path("/mini-cart/customer/**")
+						.filters((f) -> f
+							.rewritePath("/mini-cart/customer/(?<segment>.*)", "/customer-service/api/v1/${segment}")
+							.removeRequestHeader("Cookie")
+						).uri("lb://CUSTOMER")
+					)
+					.route(p -> p.path("/mini-cart/item/**")
+						.filters((f) -> f
+							.rewritePath("/mini-cart/item/(?<segment>.*)", "/item-service/api/v1/${segment}")
+							.removeRequestHeader("Cookie")
+						).uri("lb://ITEM")
+					)
+					.route(p -> p.path("/mini-cart/sales-order/**")
+						.filters((f) -> f
+							.rewritePath("/mini-cart/sales-order/(?<segment>.*)", "/sales-order-service/api/v1/${segment}")
+							.removeRequestHeader("Cookie")
+						).uri("lb://SALESORDER")
+					)
 				.build();
+		// @formatter:on
 	}
 
 }

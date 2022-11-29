@@ -45,15 +45,16 @@ public class SalesOrderService {
 		return null;
 	}
 
-	public ItemDto getItemFromItemService(String itemName) {
-		ResponseEntity<ItemDto> item = this.itemServiceProxy.getItem(itemName);
+	public ItemDto getItemFromItemService(String jwt, String itemName) {
+		ResponseEntity<ItemDto> item = this.itemServiceProxy.getItem(jwt, itemName);
 		return item.getBody();
 	}
 
-	public Map<OrderLineItem, Double> buildOrderLineItemListFromItemNameList(Map<String, Integer> itemNamesAndCount) {
+	public Map<OrderLineItem, Double> buildOrderLineItemListFromItemNameList(String jwt,
+			Map<String, Integer> itemNamesAndCount) {
 		Map<OrderLineItem, Double> res = new HashMap<>();
 		for (Map.Entry<String, Integer> es : itemNamesAndCount.entrySet()) {
-			ItemDto item = this.getItemFromItemService(es.getKey());
+			ItemDto item = this.getItemFromItemService(jwt, es.getKey());
 			OrderLineItem oli = new OrderLineItem();
 			oli.setItemName(item.getName());
 			oli.setItemQuantity(Integer.valueOf(es.getValue()));
@@ -88,8 +89,8 @@ public class SalesOrderService {
 		return new OrderResponseDto(order.get());
 	}
 
-	public List<ItemDto> getAllItemsFromProxy() {
-		ResponseEntity<List<ItemDto>> allItems = this.itemServiceProxy.getAllItems();
+	public List<ItemDto> getAllItemsFromProxy(String jwt) {
+		ResponseEntity<List<ItemDto>> allItems = this.itemServiceProxy.getAllItems(jwt);
 		return allItems.getBody();
 	}
 
