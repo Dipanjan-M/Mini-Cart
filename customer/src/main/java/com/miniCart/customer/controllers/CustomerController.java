@@ -2,7 +2,6 @@ package com.miniCart.customer.controllers;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -61,14 +60,13 @@ public class CustomerController {
 	@PostMapping("/customer")
 	public ResponseEntity<?> createCustomer(@Valid @RequestBody Customer customer, Errors errors) {
 		if (errors.hasErrors()) {
-			List<CustomValidationError> validationErrs = errors.getFieldErrors().stream()
-					.map(CustomValidationError::new).collect(Collectors.toList());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationErrs);
+			CustomValidationError validationErrs = new CustomValidationError(errors.getFieldErrors());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationErrs.getValidationErrResponses());
 		}
 
 		Optional<Customer> existingCustomer = this.customerRepo.findByEmail(customer.getEmail());
 		if (existingCustomer.isPresent()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body("Customer with email << " + existingCustomer.get().getEmail() + " >>  already exists.");
 		}
 

@@ -48,6 +48,7 @@ public class AuthController {
 		authRes.setFirstName(customer.getFirstName());
 		authRes.setLastName(customer.getLastName());
 		authRes.setEmail(customer.getEmail());
+		authRes.setRoleName(customer.getRole().getRoleName());
 		return ResponseEntity.ok(authRes);
 	}
 

@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -30,11 +31,13 @@ public class Customer {
 	@Column(nullable = false)
 	@NotBlank(message = "First name must not be blank")
 	@Size(min = 3, max = 20, message = "First name should be in between 3 to 20 characters")
+	@Pattern(regexp = "^[A-Z]{1}[a-z]+", message = "First name must contain alphabetical characters only and should start with an uppercase character")
 	private String firstName;
 
 	@Column(nullable = false)
 	@NotBlank(message = "Last name must not be blank")
 	@Size(min = 3, max = 20, message = "Last name should be in between 3 to 20 characters")
+	@Pattern(regexp = "^[A-Z]{1}[a-z]+", message = "Last name must contain alphabetical characters only and should start with an uppercase character")
 	private String lastName;
 
 	@Column(nullable = false, unique = true)
@@ -42,6 +45,7 @@ public class Customer {
 	private String email;
 
 	@JsonProperty(access = Access.WRITE_ONLY)
+	@NotBlank(message = "Password must not be blank")
 	private String password;
 
 	@OneToOne(cascade = CascadeType.PERSIST)
