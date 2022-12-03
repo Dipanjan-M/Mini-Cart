@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -41,7 +40,8 @@ public class Customer {
 	private String lastName;
 
 	@Column(nullable = false, unique = true)
-	@Email(message = "Please enter a valid email")
+	@NotBlank(message = "Email must not be blank")
+	@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Please enter a valid email address")
 	private String email;
 
 	@JsonProperty(access = Access.WRITE_ONLY)

@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: apigateway
+  config:
+    import: optional:configserver:http://localhost:8051/
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  info:
+    env:
+      enabled: 'true'
+
+info:
+  app:
+    version: 1.0.0
+    name: Api Gateway Server
+    description: Mini Cart Api Gateway Server Application

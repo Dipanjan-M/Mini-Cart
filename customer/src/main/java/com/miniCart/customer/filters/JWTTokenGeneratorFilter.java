@@ -36,7 +36,7 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 			String jwt = Jwts.builder().setIssuer("Mini Cart").setSubject("JWT Token")
 					.claim("email", authentication.getName())
 					.claim("authorities", populateAuthorities(authentication.getAuthorities())).setIssuedAt(new Date())
-					.setExpiration(new Date((new Date()).getTime() + 1000 * 60 * 5)).signWith(key).compact();
+					.setExpiration(new Date((new Date()).getTime() + 1000 * 60 * 30)).signWith(key).compact();
 			response.setHeader(SecurityConstants.JWT_HEADER, jwt);
 		}
 

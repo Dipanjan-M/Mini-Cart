@@ -6,6 +6,7 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 
 @SpringBootApplication
 @EnableEurekaClient
@@ -24,18 +25,24 @@ public class ApigatewayApplication {
 						.filters((f) -> f
 							.rewritePath("/mini-cart/customer/(?<segment>.*)", "/customer-service/api/v1/${segment}")
 							.removeRequestHeader("Cookie")
+							.dedupeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "RETAIN_FIRST")
+							.dedupeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "RETAIN_FIRST")
 						).uri("lb://CUSTOMER")
 					)
 					.route(p -> p.path("/mini-cart/item/**")
 						.filters((f) -> f
 							.rewritePath("/mini-cart/item/(?<segment>.*)", "/item-service/api/v1/${segment}")
 							.removeRequestHeader("Cookie")
+							.dedupeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "RETAIN_FIRST")
+							.dedupeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "RETAIN_FIRST")
 						).uri("lb://ITEM")
 					)
 					.route(p -> p.path("/mini-cart/sales-order/**")
 						.filters((f) -> f
 							.rewritePath("/mini-cart/sales-order/(?<segment>.*)", "/sales-order-service/api/v1/${segment}")
 							.removeRequestHeader("Cookie")
+							.dedupeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "RETAIN_FIRST")
+							.dedupeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "RETAIN_FIRST")
 						).uri("lb://SALESORDER")
 					)
 				.build();
