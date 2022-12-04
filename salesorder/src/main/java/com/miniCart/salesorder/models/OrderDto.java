@@ -1,12 +1,12 @@
 package com.miniCart.salesorder.models;
 
-import java.util.Map;
+import java.util.List;
 
 public class OrderDto {
 
 	private long customerId;
 	private String orderDescription;
-	private Map<String, Integer> itemNamesAndCount;
+	private List<ItemNameAndCount> itemNamesAndCount;
 
 	public OrderDto() {
 		super();
@@ -28,11 +28,11 @@ public class OrderDto {
 		this.customerId = customerId;
 	}
 
-	public Map<String, Integer> getItemNamesAndCount() {
+	public List<ItemNameAndCount> getItemNamesAndCount() {
 		return itemNamesAndCount;
 	}
 
-	public void setItemNamesAndCount(Map<String, Integer> itemNamesAndCount) {
+	public void setItemNamesAndCount(List<ItemNameAndCount> itemNamesAndCount) {
 		this.itemNamesAndCount = itemNamesAndCount;
 	}
 

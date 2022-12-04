@@ -14,6 +14,7 @@ import com.miniCart.salesorder.entities.CustomerSoS;
 import com.miniCart.salesorder.entities.OrderLineItem;
 import com.miniCart.salesorder.entities.SalesOrder;
 import com.miniCart.salesorder.models.ItemDto;
+import com.miniCart.salesorder.models.ItemNameAndCount;
 import com.miniCart.salesorder.models.LookupResponseDto;
 import com.miniCart.salesorder.models.OrderResponseDto;
 import com.miniCart.salesorder.models.StatusResponse;
@@ -51,15 +52,15 @@ public class SalesOrderService {
 	}
 
 	public Map<OrderLineItem, Double> buildOrderLineItemListFromItemNameList(String jwt,
-			Map<String, Integer> itemNamesAndCount) {
+			List<ItemNameAndCount> itemNamesAndCount) {
 		Map<OrderLineItem, Double> res = new HashMap<>();
-		for (Map.Entry<String, Integer> es : itemNamesAndCount.entrySet()) {
-			ItemDto item = this.getItemFromItemService(jwt, es.getKey());
+		for (ItemNameAndCount nameAndCount: itemNamesAndCount) {
+			ItemDto item = this.getItemFromItemService(jwt, nameAndCount.getItemName());
 			OrderLineItem oli = new OrderLineItem();
 			oli.setItemName(item.getName());
-			oli.setItemQuantity(Integer.valueOf(es.getValue()));
+			oli.setItemQuantity(nameAndCount.getCount());
 			oli.setUnitPrice(item.getPrice());
-			Double totalPrice = Integer.valueOf(es.getValue()) * item.getPrice();
+			Double totalPrice = nameAndCount.getCount() * item.getPrice();
 			res.put(oli, totalPrice);
 		}
 		return res;

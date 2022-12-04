@@ -125,7 +125,7 @@ public class SalesOrderServiceController {
 	}
 
 	@SuppressWarnings("unused")
-	private ResponseEntity<?> itemServiceOutagePost(OrderDto dto, RuntimeException ex) {
+	private ResponseEntity<?> itemServiceOutagePost(String msg, OrderDto dto, RuntimeException ex) {
 		if (ex instanceof RetryableException) {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Item service is temporarily down");
 		}
@@ -133,6 +133,6 @@ public class SalesOrderServiceController {
 			FeignException exp = (FeignException) ex;
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exp.contentUTF8());
 		}
-		throw new RuntimeException();
+		throw new RuntimeException(ex.getLocalizedMessage());
 	}
 }
