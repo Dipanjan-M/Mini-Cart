@@ -23,6 +23,7 @@ public class ApigatewayApplication {
 				.routes()
 					.route(p -> p.path("/mini-cart/customer/**")
 						.filters((f) -> f
+							.circuitBreaker(c -> c.setName("customerSvcCB").setFallbackUri("/fallback/customer-service"))
 							.rewritePath("/mini-cart/customer/(?<segment>.*)", "/customer-service/api/v1/${segment}")
 							.removeRequestHeader("Cookie")
 							.dedupeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "RETAIN_FIRST")
@@ -31,6 +32,7 @@ public class ApigatewayApplication {
 					)
 					.route(p -> p.path("/mini-cart/item/**")
 						.filters((f) -> f
+							.circuitBreaker(c -> c.setName("itemSvcCB").setFallbackUri("/fallback/item-service"))
 							.rewritePath("/mini-cart/item/(?<segment>.*)", "/item-service/api/v1/${segment}")
 							.removeRequestHeader("Cookie")
 							.dedupeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "RETAIN_FIRST")
@@ -39,6 +41,7 @@ public class ApigatewayApplication {
 					)
 					.route(p -> p.path("/mini-cart/sales-order/**")
 						.filters((f) -> f
+							.circuitBreaker(c -> c.setName("salesOrderSvcCB").setFallbackUri("/fallback/sales-oreder-service"))
 							.rewritePath("/mini-cart/sales-order/(?<segment>.*)", "/sales-order-service/api/v1/${segment}")
 							.removeRequestHeader("Cookie")
 							.dedupeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "RETAIN_FIRST")

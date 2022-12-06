@@ -24,6 +24,7 @@ public class BasicSecurityConfig {
 
 	// @formatter:off
 	private String[] whiteListUrls = {
+			"/h2-console/**",
 			"/actuator/info",
 			"/sales-order-service/api/v1/item/status",
 			"/error"
@@ -76,6 +77,7 @@ public class BasicSecurityConfig {
 			.httpBasic().and()
 			.formLogin().disable();
 		// @formatter:on
+		http.headers().frameOptions().disable();
 		return http.build();
 	}
 

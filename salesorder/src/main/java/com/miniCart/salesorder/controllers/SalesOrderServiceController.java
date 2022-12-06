@@ -120,14 +120,26 @@ public class SalesOrderServiceController {
 
 	@SuppressWarnings("unused")
 	private ResponseEntity<?> itemServiceOutage(Throwable t) {
-		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Item service is temporarily down");
+//		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+//				.body("Item service is temporarily down. Operation failed due to outage...");
+		
+		if (t instanceof RetryableException) {
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+					.body("Item service is temporarily down. Operation failed due to outage...");
+		}
+		if (t instanceof FeignException) {
+			FeignException exp = (FeignException) t;
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exp.contentUTF8());
+		}
+		throw new RuntimeException(t.getLocalizedMessage());
 
 	}
 
 	@SuppressWarnings("unused")
 	private ResponseEntity<?> itemServiceOutagePost(String msg, OrderDto dto, RuntimeException ex) {
 		if (ex instanceof RetryableException) {
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Item service is temporarily down");
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+					.body("Item service is temporarily down. Unable to create the order.");
 		}
 		if (ex instanceof FeignException) {
 			FeignException exp = (FeignException) ex;

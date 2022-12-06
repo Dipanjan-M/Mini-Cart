@@ -53,14 +53,27 @@ public class SalesOrderService {
 
 	public Map<OrderLineItem, Double> buildOrderLineItemListFromItemNameList(String jwt,
 			List<ItemNameAndCount> itemNamesAndCount) {
+
+		Map<String, Integer> mapFromList = new HashMap<>(); // Construct a map to restrict duplicates
+
+		for (ItemNameAndCount nameAndCount : itemNamesAndCount) {
+			if (mapFromList.containsKey(nameAndCount.getItemName())) {
+				mapFromList.put(nameAndCount.getItemName(),
+						mapFromList.get(nameAndCount.getItemName()) + nameAndCount.getCount());
+			} else {
+				mapFromList.put(nameAndCount.getItemName(), nameAndCount.getCount());
+			}
+		}
+
 		Map<OrderLineItem, Double> res = new HashMap<>();
-		for (ItemNameAndCount nameAndCount: itemNamesAndCount) {
-			ItemDto item = this.getItemFromItemService(jwt, nameAndCount.getItemName());
+
+		for (Map.Entry<String, Integer> es : mapFromList.entrySet()) {
+			ItemDto item = this.getItemFromItemService(jwt, es.getKey());
 			OrderLineItem oli = new OrderLineItem();
 			oli.setItemName(item.getName());
-			oli.setItemQuantity(nameAndCount.getCount());
+			oli.setItemQuantity(Integer.valueOf(es.getValue()));
 			oli.setUnitPrice(item.getPrice());
-			Double totalPrice = nameAndCount.getCount() * item.getPrice();
+			Double totalPrice = Integer.valueOf(es.getValue()) * item.getPrice();
 			res.put(oli, totalPrice);
 		}
 		return res;

@@ -22,7 +22,8 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		return request.getServletPath().equals("/sales-order-service/api/v1/item/status")
-				|| request.getServletPath().equals("/actuator/info");
+				|| request.getServletPath().equals("/actuator/info") 
+				|| request.getServletPath().equals("/h2-console");
 	}
 
 	@Autowired
