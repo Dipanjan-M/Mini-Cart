@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -22,12 +23,14 @@ public class Item {
 
 	@Column(nullable = false, unique = true)
 	@NotBlank(message = "Item name must not be blank")
-	@Size(min = 3, max = 25, message = "Item name length must be inbetween 3 to 25")
+	@Size(min = 3, max = 25, message = "Item name length must be in-between 3 to 25")
 	private String name;
 
-	@NotBlank(message = "Item description ,ust not be blank")
+	@NotBlank(message = "Item description, must not be blank")
+	@Size(min = 5, max = 50, message = "Item description length must be in-between 5 to 50")
 	private String description;
 
+	@DecimalMin(value = "1", message = "Item's price must not be zero")
 	private double price;
 
 	public long getId() {
