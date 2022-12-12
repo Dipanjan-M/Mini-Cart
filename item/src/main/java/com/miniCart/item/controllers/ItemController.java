@@ -65,7 +65,7 @@ public class ItemController {
 		Optional<Item> ifExists = this.itemRepo.findByName(item.getName());
 
 		if (ifExists.isPresent()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body("Item with name << " + ifExists.get().getName() + " >> already exists");
 		}
 
